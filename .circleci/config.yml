@@ -117,8 +117,6 @@ workflows:
           filters:
             branches:
               only: /ssh-test/
-            tags:
-              only: /^[^\d].*/ # do not start with zero
       - rebase-merge:
           filters:
             branches:
