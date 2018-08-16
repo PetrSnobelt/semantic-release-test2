@@ -1,0 +1,26 @@
+{
+  "name": "semantic-release-test",
+  "version": "1.0.0",
+  "description": "another message",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PetrSnobelt/semantic-release-test2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PetrSnobelt/semantic-release-test2/issues"
+  },
+  "homepage": "https://github.com/PetrSnobelt/semantic-release-test2#readme",
+  "devDependencies": {
+    "@semantic-release/exec": "^3.1.0",
+    "semantic-release": "^15.9.8",
+    "@semantic-release/git": "^7.0.1"
+  }
+}

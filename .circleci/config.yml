@@ -1,0 +1,136 @@
+version: 2
+
+jobs:
+  test_node_8:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - run: node index.js
+
+  release:
+    docker:
+      - image: circleci/node:9
+    steps:
+      - checkout
+      - add_ssh_keys
+      - run: npm install
+      - run: export DEBUG=*
+      # Run optional required steps before releasing
+      # - run: npm run build-script
+      - run: npx semantic-release
+
+  ssh-merge:
+    docker:
+      - image: circleci/node:9
+    steps:
+      - add_ssh_keys
+      - checkout
+      - run: git config user.email "automation@mailinator.com"
+      - run: git config user.name "CircleCI"
+      - run: git status -v
+      - run: git fetch
+      - run: git checkout master
+      - run: git rebase
+      - run: git checkout $CIRCLE_BRANCH
+      - run: git rebase master
+      - run: git checkout master
+      - run: git merge --ff-only $CIRCLE_BRANCH
+      - run: git push origin master
+
+  ssh-version:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - add_ssh_keys
+      - run: git config --global user.email "automation@mailinator.com"
+      - run: git config --global user.name "CircleCI"
+      - checkout
+      # - run: git status -v
+      # - run: git remote -v
+      # - run: cat package.json
+      - run: npm version patch
+      # - run: cat package.json
+      # - run: git status -v
+      # - run: git commit -m "Update via CircleCI"
+      # Push quietly to prevent showing the token in log
+      - run: git push -v --all origin
+
+  # based on
+  # https://subvisual.co/blog/posts/44-easily-merging-pull-requests/
+  rebase-merge:
+    docker:
+      - image: circleci/node:8
+    steps:
+      # - checkout
+      - run: echo $CIRCLE_COMPARE_URL
+      - run: echo $CIRCLE_PROJECT_REPONAME
+      - run: echo $CIRCLE_PROJECT_USERNAME
+      - run: echo $CIRCLE_BUILD_URL
+      - run: git clone https://x-oauth-basic:$GH_TOKEN@github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run: git config user.email "automation@mailinator.com"
+      - run: git config user.name "CircleCI"
+      - run: git status
+      - run: git fetch
+      - run: git checkout master
+      - run: git rebase
+      - run: git checkout $CIRCLE_BRANCH
+      - run: git rebase master
+      - run: git checkout master
+      - run: git merge --ff-only $CIRCLE_BRANCH
+      - run: git push origin master
+      # - run: npm version patch
+      # - run: git push --tags origin master
+      # - run: git status
+
+  auto-merge:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - run: git remote -v
+      - run: echo $CIRCLE_BRANCH
+      - run: git remote remove origin
+      - run: git remote add origin https://x-oauth-basic:$GH_TOKEN@github.com/PetrSnobelt/semantic-release-test.git
+      - run: git remote -v
+      - run: git checkout master
+      - run: git branch -r
+      - run: git branch --set-upstream-to=origin/master master
+      - run: git config --global user.email "automation@mailinator.com"
+      - run: git config --global user.name "CircleCI"
+      - run: git pull
+      - run: git merge $CIRCLE_BRANCH
+      # - run: npm version minor
+      # - run: git remote rename origin origin-read-only
+      # - run: git remote set-url --push origin https://circle-ci:$GH_TOKEN@github.com/PetrSnobelt/semantic-release-test.git
+      - run: git push origin master
+      - run: git push --tags origin master
+
+workflows:
+  version: 2
+  test_and_release:
+    # Run the test jobs first, then the release only when all the test jobs are successful
+    jobs:
+      # - test_node_6
+      - test_node_8
+      - ssh-merge:
+          filters:
+            branches:
+              only: /ssh-test/
+            tags:
+              only: /^[^\d].*/ # do not start with zero
+      - rebase-merge:
+          filters:
+            branches:
+              only: /phraseapp-locales/
+      - auto-merge:
+          filters:
+            branches:
+              only: /phraseapp-localesX/
+      - release:
+          filters:
+            branches:
+              only: /master/
+          requires:
+            # - test_node_6
+            - test_node_8

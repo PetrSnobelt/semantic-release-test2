@@ -1,0 +1,23 @@
+{
+  "verifyConditions": [
+    "@semantic-release/github",
+    "@semantic-release/git"
+  ],
+  "verifyRelease": [],
+  "analyzeCommits": [
+    {
+      "path": "@semantic-release/exec",
+      "cmd": "echo minor"
+    }
+  ],
+  "prepare": [
+    {
+      "path": "@semantic-release/exec",
+      "cmd": "npm version --force --allow-same-version true --git-tag-version false --commit-hooks false ${nextRelease.version}"
+    },
+    "@semantic-release/git"
+  ],
+  "publish": [
+    "@semantic-release/github"
+  ]
+}
