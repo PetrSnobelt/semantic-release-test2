@@ -15,7 +15,8 @@ jobs:
       - checkout
       - add_ssh_keys
       - run: npm install --no-package-lock
-      - run: npm run prepublish
+      # Using "prepack" script, so next can be commented out
+      # - run: npm run prepublish
       - run: export DEBUG=*
       # Run optional required steps before releasing
       # - run: npm run build-script

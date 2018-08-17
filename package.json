@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "node index.js",
-    "prepublish": "mkdir -p lib && cp index.js lib/index.js"
+    "prepack": "mkdir -p lib && cp index.js lib/index.js"
   },
   "files": [
     "lib"
