@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node index.js"
+    "test": "node index.js",
+    "prepublish": "mkdir lib && cp index.js lib/index.js"
   },
+  "files": ["lib"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PetrSnobelt/semantic-release-test2.git"
