@@ -1,6 +1,6 @@
 {
   "name": "semantic-release-test-by-ps",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "another message",
   "main": "index.js",
   "scripts": {
