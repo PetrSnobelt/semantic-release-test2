@@ -1,6 +1,7 @@
 {
   "verifyConditions": [
     "@semantic-release/github",
+    "@semantic-release/npm",
     "@semantic-release/git"
   ],
   "verifyRelease": [],
@@ -11,6 +12,7 @@
     }
   ],
   "prepare": [
+    "@semantic-release/npm",
     {
       "path": "@semantic-release/exec",
       "cmd": "npm version --force --allow-same-version true --git-tag-version false --commit-hooks false ${nextRelease.version}"
@@ -18,6 +20,7 @@
     "@semantic-release/git"
   ],
   "publish": [
-    "@semantic-release/github"
+    "@semantic-release/github",
+    "@semantic-release/npm"
   ]
 }
