@@ -1,0 +1,1 @@
+This package/repository is used only to test various semantic-release configuration with CircleCI
